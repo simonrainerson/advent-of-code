@@ -1,18 +1,15 @@
 defmodule AdventOfCode do
   @moduledoc """
   Documentation for `AdventOfCode`.
+
+  Collection of entry points for each day
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> AdventOfCode.hello()
-      :world
+  Day 1 Trebuchet.
 
   """
-  def hello do
-    :world
+  def day1() do
+    Day1.part1(Inputs.stream(1))
   end
 end
