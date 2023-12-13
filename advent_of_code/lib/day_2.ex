@@ -46,4 +46,11 @@ defmodule Day2 do
     |> Stream.map(&Map.get(&1, :id))
     |> Enum.sum()
   end
+
+  def part2(stream \\ Inputs.stream(2)) do
+    stream
+    |> Stream.map(&Game.parse_str/1)
+    |> Stream.map(&(Map.get(&1, :red) * Map.get(&1, :green) * Map.get(&1, :blue)))
+    |> Enum.sum()
+  end
 end
