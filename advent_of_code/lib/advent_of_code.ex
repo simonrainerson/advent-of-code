@@ -5,11 +5,17 @@ defmodule AdventOfCode do
   Collection of entry points for each day
   """
 
+  defp print(day, part, solution) do
+    IO.puts("Answer to Day #{day} part #{part}: #{solution}")
+  end
+
   @doc """
-  Day 1 Trebuchet.
+  Print all answers.
 
   """
-  def day1() do
-    Day1.part1(Inputs.stream(1))
+  def all() do
+    print(1, 1, Day1.part1())
+    print(1, 2, Day1.part2())
+    print(2, 1, Day2.part1())
   end
 end
