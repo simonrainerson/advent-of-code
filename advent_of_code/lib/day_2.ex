@@ -10,7 +10,7 @@ defmodule Game do
     game
   end
 
-  defp parse_game(game, text) do
+  defp parse_game(text, game) do
     text
     |> String.trim()
     |> String.split(" ")
@@ -28,7 +28,7 @@ defmodule Game do
     |> List.first()
     |> String.split(";")
     |> Enum.flat_map(&String.split(&1, ","))
-    |> Enum.reduce(game, fn cubes, game -> parse_game(game, cubes) end)
+    |> Enum.reduce(game, &parse_game/2)
   end
 end
 
