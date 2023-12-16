@@ -68,7 +68,7 @@ defmodule Day3 do
               {next, engine_parts,
                (sequence
                 |> Enum.with_index()
-                |> Enum.map(fn {_, offset} -> {i + offset, row} end)) ++ symbols}
+                |> Enum.map(fn {symbol, offset} -> {i + offset, row, symbol} end)) ++ symbols}
           end
         end
       )
@@ -90,9 +90,48 @@ defmodule Day3 do
   """
   def part1(stream \\ Inputs.stream(3)) do
     {engine_parts, symbols} = parse_input(stream)
+    symbols = symbols |> Enum.map(&{elem(&1, 0), elem(&1, 1)})
 
     engine_parts
     |> Enum.map(&EnginePart.value_for(&1, symbols))
+    |> Enum.sum()
+  end
+
+  def cog_neighbours(
+        cog,
+        %EnginePart{value: v, top_left: {l, t}, bottom_right: {r, b}},
+        {neighbours, value}
+      ) do
+    coords = for x <- l..r, y <- t..b, do: {x, y, "*"}
+
+    if cog in coords do
+      case neighbours do
+        :none -> {:one, v}
+        :one -> {:two, v * value}
+        _ -> {:too_many, 0}
+      end
+    else
+      {neighbours, value}
+    end
+  end
+
+  def cog_value(cog, engine_parts) do
+    engine_parts
+    |> Enum.reduce({:none, 0}, fn ep, val -> cog_neighbours(cog, ep, val) end)
+  end
+
+  def part2(stream \\ Inputs.stream(3)) do
+    {engine_parts, symbols} = parse_input(stream)
+
+    symbols
+    |> Enum.filter(&(elem(&1, 2) == "*"))
+    |> Enum.map(&cog_value(&1, engine_parts))
+    |> Enum.map(fn {n, value} ->
+      case n do
+        :two -> value
+        _ -> 0
+      end
+    end)
     |> Enum.sum()
   end
 end
