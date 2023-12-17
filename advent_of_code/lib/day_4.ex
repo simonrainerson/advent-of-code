@@ -1,7 +1,6 @@
 defmodule Day4 do
   def parse_line(text) do
-    [card, winning_numbers] = text |> String.split("|")
-    [card_name, card_numbers] = card |> String.split(":")
+    [card_name, card_numbers, winning_numbers] = text |> String.split([":", "|"])
 
     {
       card_name,
