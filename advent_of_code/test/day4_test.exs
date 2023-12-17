@@ -30,5 +30,35 @@ defmodule Day4Test do
     test "EniginePart.value_for/2" do
       assert 13 == Day4.part1(@scratch_cards)
     end
+
+    test "Day4.accumulate_cards/2" do
+      card_map =
+        Day4.accumulate_cards(
+          {{"Game Uno", MapSet.new([1, 2, 3]), MapSet.new([2, 3, 4])}, 0},
+          %{}
+        )
+
+      assert %{0 => 1, 1 => 1, 2 => 1} == card_map
+
+      card_map =
+        Day4.accumulate_cards(
+          {{"Game 2", MapSet.new([1, 2, 3]), MapSet.new([2, 3, 4])}, 1},
+          card_map
+        )
+
+      assert %{0 => 1, 1 => 2, 2 => 3, 3 => 2} == card_map
+
+      card_map =
+        Day4.accumulate_cards(
+          {{"Game Three", MapSet.new([7, 8, 9]), MapSet.new([1, 2, 3])}, 2},
+          card_map
+        )
+
+      assert %{0 => 1, 1 => 2, 2 => 4, 3 => 2} == card_map
+    end
+
+    test "Day4.part2/1" do
+      assert 30 == Day4.part2(@scratch_cards)
+    end
   end
 end

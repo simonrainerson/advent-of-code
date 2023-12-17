@@ -30,4 +30,35 @@ defmodule Day4 do
     |> Stream.map(&score_card/1)
     |> Enum.sum()
   end
+
+  def accumulate_cards({{_, numbers, winning}, index}, card_amounts) do
+    new_cards = numbers |> MapSet.intersection(winning) |> MapSet.size()
+
+    {mult, card_amounts} =
+      card_amounts
+      |> Map.get_and_update(index, fn cur ->
+        case cur do
+          nil -> {1, 1}
+          x -> {x + 1, x + 1}
+        end
+      end)
+
+    if new_cards > 0 do
+      1..new_cards
+      |> Enum.reduce(card_amounts, fn windex, card_map ->
+        Map.update(card_map, index + windex, mult, &(&1 + mult))
+      end)
+    else
+      card_amounts
+    end
+  end
+
+  def part2(stream \\ Inputs.stream(4)) do
+    stream
+    |> Stream.map(&parse_line/1)
+    |> Stream.with_index()
+    |> Enum.reduce(%{}, &accumulate_cards/2)
+    |> Map.values()
+    |> Enum.sum()
+  end
 end
