@@ -5,7 +5,10 @@ defmodule Day5 do
     [dest_start, source_start, length] =
       string |> String.split() |> Enum.map(&String.to_integer/1)
 
-    [source_start..(source_start + length - 1), dest_start]
+    {
+      source_start..(source_start + length - 1),
+      dest_start - source_start
+    }
   end
 
   def chunker("", :new) do
@@ -35,29 +38,31 @@ defmodule Day5 do
   end
 
   def map_seed(seed, mappings) do
-    case mappings |> Enum.find(fn ranges -> seed in Enum.fetch!(ranges, 0) end) do
-      nil ->
-        seed
-
-      [source, dest] ->
-        index = Enum.find_index(source, fn s -> s == seed end)
-        dest + index
-    end
+    mappings
+    |> Enum.find_value(seed, fn {range, offset} ->
+      if seed in range do
+        seed + offset
+      else
+        nil
+      end
+    end)
   end
 
-  def part1(stream \\ Inputs.stream(5)) do
-    seeds =
-      stream
-      |> Stream.take_while(&String.starts_with?(&1, @seeds_prefix))
-      |> Enum.to_list()
-      |> hd
-      |> string_to_seeds()
+  def parse_seeds(stream) do
+    stream
+    |> Stream.take_while(&String.starts_with?(&1, @seeds_prefix))
+    |> Enum.to_list()
+    |> hd
+    |> string_to_seeds()
+  end
 
-    maps =
-      stream
-      |> Stream.drop_while(&String.starts_with?(&1, @seeds_prefix))
-      |> stream_to_map()
+  def parse_maps(stream) do
+    stream
+    |> Stream.drop_while(&String.starts_with?(&1, @seeds_prefix))
+    |> stream_to_map()
+  end
 
+  def transform_seed(seeds, maps) do
     seeds
     |> Stream.map(&map_seed(&1, maps["seed-to-soil map:"]))
     |> Stream.map(&map_seed(&1, maps["soil-to-fertilizer map:"]))
@@ -66,6 +71,35 @@ defmodule Day5 do
     |> Stream.map(&map_seed(&1, maps["light-to-temperature map:"]))
     |> Stream.map(&map_seed(&1, maps["temperature-to-humidity map:"]))
     |> Stream.map(&map_seed(&1, maps["humidity-to-location map:"]))
+    |> Enum.min()
+  end
+
+  def part1(stream \\ Inputs.stream(5)) do
+    seeds = parse_seeds(stream)
+
+    maps = parse_maps(stream)
+
+    transform_seed(seeds, maps)
+  end
+
+  def parse_seed_ranges(stream) do
+    stream
+    |> parse_seeds()
+    |> Enum.chunk_every(2)
+    |> Enum.map(fn chunk ->
+      range_start = Enum.at(chunk, 0)
+      range_end = range_start + Enum.at(chunk, 1) - 1
+      range_start..range_end
+    end)
+  end
+
+  def part2(stream \\ Inputs.stream(5)) do
+    seeds = parse_seed_ranges(stream)
+
+    maps = parse_maps(stream)
+
+    seeds
+    |> Stream.map(&transform_seed(&1, maps))
     |> Enum.min()
   end
 end
