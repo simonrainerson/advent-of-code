@@ -27,5 +27,6 @@ defmodule AdventOfCode do
     print(6, 1, Day6.part1())
     print(6, 2, Day6.part2())
     print(7, 1, Day7.part1())
+    print(7, 2, Day7.part2())
   end
 end
