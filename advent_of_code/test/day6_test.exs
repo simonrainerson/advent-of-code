@@ -20,5 +20,13 @@ defmodule Day6Test do
     test "Day6.part1/1" do
       assert 288 == Day6.part1(@example_input)
     end
+
+    test "Day6.parse_one/1" do
+      assert {71530, 940_200} == Day6.parse_one(@example_input)
+    end
+
+    test "Day6.part2/1" do
+      assert 71503 == Day6.part2(@example_input)
+    end
   end
 end

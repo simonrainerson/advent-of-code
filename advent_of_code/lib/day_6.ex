@@ -22,4 +22,19 @@ defmodule Day6 do
     |> Enum.map(&num_ways_to_win/1)
     |> Enum.product()
   end
+
+  def parse_one(stream) do
+    ["Time:" <> time, "Distance:" <> distance] = stream |> Enum.to_list()
+
+    {
+      time |> String.replace(~r/\W/, "") |> String.to_integer(),
+      distance |> String.replace(~r/\W/, "") |> String.to_integer()
+    }
+  end
+
+  def part2(stream \\ Inputs.stream(6)) do
+    stream
+    |> parse_one()
+    |> num_ways_to_win()
+  end
 end
